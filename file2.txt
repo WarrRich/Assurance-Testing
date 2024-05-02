@@ -1,0 +1,4 @@
+"
+BIKE::parallel:cost=$1999
+Tires: B(1,2), cost=$33
+Brakes: B(4,3), cost=$45"

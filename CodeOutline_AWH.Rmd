@@ -1,0 +1,70 @@
+---
+title: "CodeOutline"
+author: "Anna Wolford"
+date: "2023-10-14"
+output: html_document
+---
+
+## CODE OUTLINE
+User provides the following information: 
+
+- The user's system as an RBD
+  - System, subsystems, components *(string)*
+  - Series, parallel, phantom vs no phantom (this should be defined in the step above) *(string)*
+  - Component costs, system cost (sys_only_price) *(double)* If no cost is listed, code will create value of $Inf
+  - Testable: If a system cost is included, we assume it's testable
+  - Rbeta parameters (alpha, beta) *(integer)*
+  - Number of Monte Carlo samples (default=10000) *(integer)*
+  - Number of acceptable failures, number of tests *(integer)*
+  - Rejectable reliability level, acceptable reliability level *(double)*
+  - Spaces are okay but there MUST be a new line between different components
+    
+# MAIN FUNCTION #
+
+- Warnings with STOP:
+  <!-- - Must begin with (might not apply now that I changed the formatting) -->
+  - Contain series or parallel relationship
+  - Require order to be system, subsystems, components (not sure how to build a warning here)
+    - Listed once AND first should be system, listed twice should be subsystems, listed once AND not first should be components
+    - Subsystem or component names should not have a number in them. (otherwise, cost and priors will get confused in code)
+    - There should be no reason that any name is listed more than twice - correct? <!--double check on this. there shouldn't be an interconnected system -->
+  - No circular relationships
+  - Formatting and grammar requirements
+  - Unique definitions
+  - Make sure that subcomponents have different component names, otherwise it won't work (I think explicitly tell them this one, bc it relies on duplicate words. And no numbers in the words. So as of right now they couldn't do something like Component1 Component2)
+  - Warning to make sure however many subsystem pieces there are, their components information is included
+  - Make sure there is a \n in between subsystems and system
+  - Spaces are okay but there MUST be a new line between different components
+  
+- Internal workings the users don't need to see:
+  - Test Score (to establish a preference for one test over another)
+
+- Function functions functioning: 
+  - Read in RBD
+  - Pull out all information given by RBD input 
+    - Cost (testable)
+    - Priors
+    - Series or parallel relationship
+  - Create warnings/ blocks for correct formatting
+  - Create variables out of respective component names' strings
+  - establish series and parallel relationships 
+  - Create mcsamps # samples from rbeta's alpha and beta
+  - Get pbinom probabilities of tests passing
+  - Calculate overall TIP and risks
+  - #return different lists depending on if samps already exists 
+  - Create vector/algorithm for system tests and system failures
+  - Max distance to give test score
+
+
+- Function outputs:
+  - Final Number of acceptable system failures (cvec)
+  - Number of assurance tests applied (nvec)
+  - Test Costs
+    - Comparison between System Tests Only, System & Component Tests, Cost Difference, and Time Difference between the two (only if the user asks)
+  - PPR and PCR (more internal--unless the user asks) <!-- where to include this in the input? -->
+  - Output for each iteration (only if the user asks) <!-- where to include this in the input? -->
+
+
+
+
+

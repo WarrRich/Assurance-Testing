@@ -1,0 +1,12 @@
+"
+BI2KE::series:cost=$1999
+Tires: cost=$33
+Brakes: cost=$45
+
+Tires::Series
+BackTire: B(1,2), cost=$12
+FrontTire: B(1,2), cost=$12
+
+Brakes::Parallel
+FrontBrakes: B(3,2), cost=$12
+BackBrakes: B(1,4), cost=$1"
