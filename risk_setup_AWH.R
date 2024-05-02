@@ -132,6 +132,38 @@ find_risk_sys <- function(file_or_file_path="file.txt",p.rrl,p.arl,alpha, beta,m
   }
   
   words<- wordExtract(aggregated_outputs) # all words including duplicates
+  
+  # WARNING: check for circular relationships
+  check_duplicates <- function(words) {
+  word_count <- table(tolower(words))
+    
+  if (any(word_count > 2)) {
+    duplicate_words <- names(word_count[word_count > 2])
+    stop(paste("Error: The following strings (case-insensitive) appear more than twice:", paste(duplicate_words, collapse = ", ")))
+  } 
+  
+  check_circular <- function(aggregated_outputs) {
+    inside_words <- list()
+    after_colon_words <- list()
+    
+    for (string in aggregated_outputs) {
+      inside <- gsub(".*\\((.*?)\\).*", "\\1", string)
+      after_colon <- gsub(".*:(.*?)", "\\1", string)
+      
+      inside_words[[length(inside_words) + 1]] <- trimws(unlist(strsplit(inside, ",")))
+      after_colon_words[[length(after_colon_words) + 1]] <- trimws(unlist(strsplit(after_colon, ",")))
+    }
+    
+    for (i in 1:length(aggregated_outputs)) {
+      intersection <- intersect(inside_words[[i]], after_colon_words[[i]])
+      if (length(intersection) > 0) {
+        warning(paste("Warning: The following words in string", i, "appear both inside parentheses and after a colon:", paste(intersection, collapse = ", ")))
+      }
+    }
+  }
+  check_circular(aggregated_outputs)
+  
+  
   needsBuilt<-stringr::str_sub(stringr::str_extract(aggregated_outputs, ":[a-zA-Z0-9]+"), 2, -1) # subsystem and system names only
   ready<-setdiff(words, needsBuilt) # lowest level components ONLY
   system_name <- needsBuilt[1] # first word in needsBuilt (system name should be first and specified to the user)
