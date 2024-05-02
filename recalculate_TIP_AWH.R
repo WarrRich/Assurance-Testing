@@ -1,4 +1,3 @@
-
 ############################ Built TIP functions ############################
 ## TIP = x>= n-c for every component and subsystem and system 
 ## every time perform recalculate_tip, there are new n's and c's SOOOo binomial parts (TIP|priors) should be recalculated :) 
@@ -29,9 +28,9 @@ test_function1 <- test_function[[1]]
 
 recalculate_TIP <- function(priors_alpha, priors_beta, cvec, nvec, samp, sampSys, p.rrl, p.arl){
   #get probabilities of tests passing
-  tests_vec <- list()
+  tests_vec <- as.matrix(NA, ncol=length(mcsamps), nrow=length(samp))
   for(i in 1:(length(priors_alpha))){
-    tests_vec[i] <- assign(all_component_names[i], pbinom(cvec[i], nvec[i], 1-samp[[i]])) ## NOTE: check samp[[i]] length
+    tests_vec[i,] <- assign(all_component_names[i], pbinom(cvec[i], nvec[i], 1-samp[[i]])) ## NOTE: check samp[[i]] length
   } # Prior probabilities of component test passing 
   # testSys <- pbinom(cvec[length(alpha)], nvec[length(beta)], 1 - sampSys) # Jace's code was like this, with 0's for the system priors. You'd think that wouldn't work, but R compensates
   testSys <- pbinom(cvec[length(cvec)], nvec[length(nvec)], 1 - sampSys) # last value of cvec is used
